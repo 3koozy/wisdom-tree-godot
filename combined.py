@@ -40,14 +40,15 @@ def chat():
           user_prompt_history[user_id] = []
 
       user_prompt_history[user_id].append({"role": "user", "content": prompt})
-      user_prompt_history[user_id] = user_prompt_history[user_id][-20:]
+      if len(user_prompt_history[user_id]) > 20:
+        user_prompt_history[user_id] = user_prompt_history[user_id][-20:]
 
 
       try:
           response = openai.ChatCompletion.create(
               model='gpt-3.5-turbo',
               messages=[system_conf[0], system_conf[1],
-                        * user_prompt_history[user_id][-20:]],
+                        * user_prompt_history[user_id]],
               max_tokens=max_tokens,
               temperature=0.7,
               n=1
@@ -68,7 +69,6 @@ def chat():
 
           # Store the bot response in the user prompt history
           user_prompt_history[user_id].append({"role": "assistant", "content": bot_response})
-          user_prompt_history[user_id] = user_prompt_history[user_id][-20:]  # Keep only the last 20 messages
 
           return jsonify({
               "response": bot_response,
