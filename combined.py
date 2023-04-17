@@ -33,6 +33,7 @@ def chat():
     user_id = data["user_id"]
     prompt = data["prompt"]
     request_type = data["request_type"]
+    max_tokens = data.get("max_tokens") 
     if request_type == "tree":
       # Update user prompt history
       if user_id not in user_prompt_history:
@@ -41,7 +42,6 @@ def chat():
       user_prompt_history[user_id].append({"role": "user", "content": prompt})
       user_prompt_history[user_id] = user_prompt_history[user_id][-20:]
 
-      max_tokens = data.get("max_tokens", 100)  # You can change the default value here
 
       try:
           response = openai.ChatCompletion.create(
@@ -60,7 +60,7 @@ def chat():
 
           # Find all values between brackets
           bracket_values = re.findall(pattern, bot_response)
-          emotion = bracket_values[-1]
+          emotion = bracket_values[-1] if bracket_values else "Neutral"
 
           #remove emotions from response:
           bot_response = re.sub(pattern, '', bot_response)
